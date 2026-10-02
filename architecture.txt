@@ -1,6 +1,7 @@
 
         __________________
-       | <Transaction>   |                   
+       |  <Transaction>  |                   
+       |_________________|
        | - amount        |           
        | - type          |
        | - category      |
@@ -11,7 +12,8 @@
        |_________________|
 
         _____________________________________
-       | <TransactionManager>               |
+       |        <TransactionManager>        |
+       |____________________________________|
        | - Transactions:                    |
        |         list of <Transaction> objs |
        |                                    |
