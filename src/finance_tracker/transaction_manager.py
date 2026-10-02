@@ -1,7 +1,9 @@
-from execeptions import InvalidInputError 
+from .execeptions import InvalidInputError 
 from .models import Transaction
 import csv
 import dataclasses
+from pathlib import Path
+
 
 class TransactionManager:
     def __init__(self):
@@ -35,18 +37,31 @@ class TransactionManager:
         """ takes transaction as an object ,
             save it in csv file
         """
+        if not transaction_obj or not isinstance(transaction_obj, Transaction):
+            raise InvalidInputError("Invalid object for save_transaction_obj().")
+
         dic = dataclasses.asdict(transaction_obj) 
-        csv_file="data/data.csv"
+        
         fields=[]
-        for index,(key,value) in dic.keys():
+        for key in dic.keys():
             fields.append(key)
-        with open(csv_file,mode="w",newline="") as file:
+
+        # creating csv_file_path
+        current_file_parent = Path(__file__).resolve().parent
+        
+        csv_file_path=current_file_parent/"data/data.csv"
+
+        # Automatically create the 'data' directory if it doesn't exist
+        csv_file_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        with open(csv_file_path,mode="w",newline="") as file:
             writer=csv.DictWriter(file, fieldnames=fields)
             writer.writeheader()
             writer.writerow(dic)
-        return csv_file
 
+        return csv_file_path
 
+    
     def view(self):
         pass 
 
