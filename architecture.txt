@@ -11,7 +11,7 @@
        |_________________|
 
         _____________________________________
-       | <FinanceManager>                   |
+       | <TransactionManager>               |
        | - Transactions:                    |
        |         list of <Transaction> objs |
        |                                    |
