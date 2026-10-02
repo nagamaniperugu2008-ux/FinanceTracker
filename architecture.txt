@@ -1,0 +1,22 @@
+
+        __________________
+       | <Transaction>   |                   
+       | - amount        |           
+       | - type          |
+       | - category      |
+       | - date          |
+       | - note          |
+       |                 |
+       | - edit()        |
+       |_________________|
+
+        _____________________________________
+       | <FinanceManager>                   |
+       | - Transactions:                    |
+       |         list of <Transaction> objs |
+       |                                    |
+       | - view()                           |
+       | - edit()                           |
+       | - delete()                         |  
+       | - filter()                         |  
+       |____________________________________|
