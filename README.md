@@ -1,11 +1,5 @@
 # Project: Finance Tracker
 
-## Why
-
-Small enough to finish in 2–3 weeks, real enough that bad design hurts. Money forces validation, persistence, and correctness. Domain has natural entities/rules, so OOP feels necessary. Useful enough to actually build.
-
-## What
-
 A terminal app to record income/expenses, organize categories, set monthly budgets, and get summaries. Data survives between runs.
 
 ## Scope
@@ -62,8 +56,3 @@ CLI first and everything grows from it; one giant file/class; features before pr
 ## How to work
 
 At each phase end ask: *“If I change how X works, how many files must I touch?”* More than one or two means boundaries need work. That question is the core skill.
-
-## Meta prompt (condensed)
-
-For similar requests: ask for one realistic 2–3 week project teaching structure, modularity, OOP, error handling, testing, and milestones; stdlib + pytest; include persistence/exceptions; give idea, in/out scope, rules, phased milestones, skills, stretch goals, traps; no code/class designs.
-
