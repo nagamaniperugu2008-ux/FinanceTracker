@@ -15,5 +15,3 @@ tm.save_transaction_obj(transaction)
 
 print("TEST OUTPUT: ",len(tm.view()))
 
-# oyee em avthundhiii..!!! XXX???
-#who knoww? u have to know..

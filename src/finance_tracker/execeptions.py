@@ -1,19 +1,21 @@
 # Exception heirarchy
 
 # FinanceTrackerError
-# |- AddTransactionError
+# |- ATransactionError
 # |  |- InvalidInputError 
 # |  |- ...
 # |- 
-
+# import CreateTransactionError into transaction_manager.py file!
 
 class FinanceTrackerError(Exception):
     pass
 
-class AddTransactionError(FinanceTrackerError):
+class CreateTransactionError(FinanceTrackerError):
     pass
 
-class InvalidInputError(AddTransactionError):
+
+class DeleteTransactionError(FinanceTrackerError):
     pass
 
-# import AddTransactionError into transaction_manager.py file!
+class InavalidInputError(CreateTransactionError,DeleteTransactionError):
+    pass

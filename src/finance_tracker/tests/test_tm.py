@@ -38,13 +38,4 @@ print("TEST2:",tm.save_transaction_obj(obj))
 
 print("TEST4:", tm.view())
     
-# fix aindhi...!
-#hi ammai
-
-# neeku oka important skill gurinchii cheptha, ready aa...
-# ee skill ey oka GOOD programmer nii, GREAT programmer ni differentiate chesthadhi...
-# okk
-
-# come come
-
-# 
+print("test5:",tm.delete({"amount":300.0,"type":"expense","category":"food","date":2026-10-4}))
