@@ -17,5 +17,5 @@ class CreateTransactionError(FinanceTrackerError):
 class DeleteTransactionError(FinanceTrackerError):
     pass
 
-class InavalidInputError(CreateTransactionError,DeleteTransactionError):
+class InvalidInputError(CreateTransactionError,DeleteTransactionError):
     pass

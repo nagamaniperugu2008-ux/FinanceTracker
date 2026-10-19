@@ -9,4 +9,4 @@ class Transaction:
     category: str
     date: datetime.date 
     note: str
-
+    
