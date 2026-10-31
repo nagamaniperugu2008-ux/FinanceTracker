@@ -15,7 +15,7 @@ dic = {
 big_dick = {
     "amount": 20.00,
     "type": "expense",
-    "category": "food",
+
     "date": date.today(),
     "note": "icecream for bucchii"
 }
@@ -37,13 +37,13 @@ big_dick = {
 
 #print("TEST4:", tm.view())
     
- #print("test5:",tm.delete({"amount":300.0,"type":"expense","category":"food","date":2026-10-4}))
+print("test5:",tm.delete({"amount":20.0,"type":"expense","category":"food","date":"2026-10-19","note":"icecream for bucchii"}))
 
 
 #print("test6:",tm.filter({"type":"expense"}))
 #print("test6:",tm.filter({"category":"food"}))
 #print("test6:",tm.filter({"type":"income"}))
 #print("test6:",tm.filter({"category":"food"}))
-print("test 7:")
-for i in (tm.filter(min_amount="cjcjbhc")):
-    print(i)
+#print("test 7:")
+#for i in (tm.filter(min_amount="cjcjbhc")):
+#    print(i)

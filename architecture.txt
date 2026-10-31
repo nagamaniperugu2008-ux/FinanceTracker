@@ -21,3 +21,27 @@
        | - delete()                         |  
        | - filter()                         |  
        |____________________________________|
+
+
+
+
+FinanceTracker/
+│
+├── src/
+│   └── finance_tracker/
+│       ├── __init__.py
+│       ├── transaction.py
+│       ├── tracker.py
+│       ├── utilities.py
+│       └── data/
+│           └── data.csv
+│
+├── tests/
+│   ├── test_transaction.py
+│   ├── test_tracker.py
+│   ├── test_filter.py
+│   ├── test_storage.py
+│   ├── test_validation.py
+│   └── test_integration.py
+│
+└── pyproject.toml

@@ -1,4 +1,4 @@
-from .execeptions import InvalidInputError 
+from .execeptions import InvalidInputError,KeyValueError
 from .models import Transaction
 import csv
 import dataclasses
@@ -11,13 +11,14 @@ class TransactionManager:
         self.transactions = []
 
     def to_transaction_dic(self,dic):
-        return{
+            return{
             "amount":formattedmoney(dic["amount"]),
             "type":dic["type"],
             "date":formatteddate(dic["date"]),
             "category":dic["category"],
             "note":dic["note"]
-        }
+            }
+
 
     def create_transaction_obj(self, transaction_dict):
         """
@@ -53,7 +54,6 @@ class TransactionManager:
             raise InvalidInputError("Invalid object for save_transaction_obj().")
 
         dic = dataclasses.asdict(transaction_obj) 
-        print(dic)
         
         fields=[]
         for key in dic.keys():
@@ -70,7 +70,8 @@ class TransactionManager:
             if csv_file_path.stat().st_size == 0 :
                 writer.writeheader()
             writer.writerow(dic)
-        return csv_file_path
+            message="transaction saved.."
+        return message
 
     
     def view(self):
@@ -81,14 +82,20 @@ class TransactionManager:
         # TODO:
         # 1.data extract from csv file
         csv_file_path=get_csv_file_path()
-        with open(csv_file_path,mode='r',newline='')  as file:
-            if csv_file_path.stat().st_size==0:
-                data="no transactions here!"
-            else:
-                reader=csv.DictReader(file)
-                data=list(reader)
-                if not data:
+        data=[]
+        if not csv_file_path.is_file():
+            data="no transactions here! Create your first transaction.."
+        else:
+            with open(csv_file_path,mode='r',newline='')  as file:
+                if csv_file_path.stat().st_size==0:
                     data="no transactions here!"
+                else:
+                    reader=csv.DictReader(file)
+                # formatting the dictionaries  
+                    for row in reader:
+                        data.append(self.to_transaction_dic(row))
+                    if not data:
+                        data="no transactions here!"
         return data
 
 
@@ -122,7 +129,7 @@ class TransactionManager:
         #checking given transaction with the data and delete
         if msg!="no transactions here!":
             for i in data:
-                if (i==transaction_dict):
+                if (i == transaction_dict):
                     data.remove(i)
                     msg="deleted"
             if msg=="deleted":

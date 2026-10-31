@@ -17,5 +17,11 @@ class CreateTransactionError(FinanceTrackerError):
 class DeleteTransactionError(FinanceTrackerError):
     pass
 
+class FilterTransactionError(FinanceTrackerError):
+    pass
+
 class InvalidInputError(CreateTransactionError,DeleteTransactionError):
+    pass
+
+class KeyValueError(CreateTransactionError,DeleteTransactionError):
     pass
