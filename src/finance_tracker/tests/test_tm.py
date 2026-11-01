@@ -37,7 +37,7 @@ big_dick = {
 
 #print("TEST4:", tm.view())
     
-print("test5:",tm.delete({"amount":20.0,"type":"expense","category":"food","date":"2026-10-19","note":"icecream for bucchii"}))
+#print("test5:",tm.delete({"amount":20.0,"type":"expense","category":"food","date":"2026-10-19","note":"icecream for bucchii"}))
 
 
 #print("test6:",tm.filter({"type":"expense"}))
@@ -47,3 +47,6 @@ print("test5:",tm.delete({"amount":20.0,"type":"expense","category":"food","date
 #print("test 7:")
 #for i in (tm.filter(min_amount="cjcjbhc")):
 #    print(i)
+
+
+print("test delete:",tm.delete(8))

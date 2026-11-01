@@ -3,22 +3,22 @@ from .models import Transaction
 import csv
 import dataclasses
 from pathlib import Path
-from .utilities import formatteddate,formattedmoney,is_valid_date,get_csv_file_path
+from .utilities import formatteddate,formattedmoney,is_valid_date,get_csv_file_path,id_generate,to_transaction_dic
 
 
 class TransactionManager:
     def __init__(self):
         self.transactions = []
 
-    def to_transaction_dic(self,dic):
+    def create_transaction_dic(self,dic):
             return{
+            "id":id_generate(),
             "amount":formattedmoney(dic["amount"]),
             "type":dic["type"],
             "date":formatteddate(dic["date"]),
             "category":dic["category"],
-            "note":dic["note"]
+            "note":dic["note"]            
             }
-
 
     def create_transaction_obj(self, transaction_dict):
         """
@@ -33,6 +33,7 @@ class TransactionManager:
             raise InvalidInputError("Invalid dict for create_transaction_object().")
         
         obj = Transaction(
+                id=transaction_dict['id'],
                 amount=transaction_dict['amount'],
                 type=transaction_dict['type'],
                 date=transaction_dict['date'],
@@ -93,14 +94,14 @@ class TransactionManager:
                     reader=csv.DictReader(file)
                 # formatting the dictionaries  
                     for row in reader:
-                        data.append(self.to_transaction_dic(row))
+                        data.append(to_transaction_dic(row))
                     if not data:
                         data="no transactions here!"
         return data
 
 
         
-    def delete(self,transaction_dict):
+    def delete(self,id):
         """
           Deletes the given transaction from the csv data file.
           Returns result of the process(deleted or not).
@@ -109,41 +110,47 @@ class TransactionManager:
                InvalidInputError: if the dict is Invalid.
         
         """
-        if not transaction_dict or not isinstance(transaction_dict,dict):
-            raise InvalidInputError("Inavlid dict! to DeleteTransaction().")
+        if not id or not isinstance(id,int) or id<0:
+            raise InvalidInputError("invalid ID  to delete the transaction") 
         # extracting csv file data
         csv_file_path=get_csv_file_path()
         msg=""
         data=[]
-        with open(csv_file_path,mode="r",newline='') as file:
-            if csv_file_path.stat().st_size==0:
-                msg="no transactions here!"
-            else:
-                reader=csv.DictReader(file)
+        try:
+            with open(csv_file_path,mode="r",newline='') as file:
+                if csv_file_path.stat().st_size==0:
+                    msg="No transactions Found!"
+                else:
+                    reader=csv.DictReader(file)
                 # formatting the dictionaries  
-                for row in reader:
-                    data.append(self.to_transaction_dic(row))
-                if not data:
-                   
-                   msg="no transactions here!"
+                    for row in reader:
+                        data.append(to_transaction_dic(row))
+                    if not data:  
+                        msg="No transactions Found!"
+        except FileNotFoundError:
+            msg="No transactions Found!"
         #checking given transaction with the data and delete
-        if msg!="no transactions here!":
+        if msg!="No transactions Found!":
             for i in data:
-                if (i == transaction_dict):
-                    data.remove(i)
-                    msg="deleted"
-            if msg=="deleted":
+                if (id==i['id']):
+                    confirm=input("confirm to delete the transaction y/n:")
+                    if confirm=='y':
+                        data.remove(i)
+                        msg="deleted"
+                    else:
+                        return "Transaction not Deleted" 
+                if msg=="deleted":
                 # rewriting the data to csv file
-                fields=[]
-                for key in transaction_dict.keys():
-                    fields.append(key)
-                with open(csv_file_path,mode="w",newline="") as file:
-                     writer=csv.DictWriter(file,fieldnames=fields)
-                     if csv_file_path.stat().st_size == 0 :
-                        writer.writeheader()
-                     writer.writerows(data)
-            else:
-                msg="transaction is not present!"
+                    fields=[]
+                    for key in data[0].keys():
+                        fields.append(key)
+                    with open(csv_file_path,mode="w",newline="") as file:
+                        writer=csv.DictWriter(file,fieldnames=fields)
+                        if csv_file_path.stat().st_size == 0 :
+                            writer.writeheader()
+                        writer.writerows(data)
+                else:
+                    msg="Transaction is not Found!"
         #returning the result message
         return msg
         
@@ -169,7 +176,7 @@ class TransactionManager:
                         data=[]
                         #converting csv dic to transaction dic
                         for row in reader:
-                            data.append(self.to_transaction_dic(row))
+                            data.append(to_transaction_dic(row))
                         if not data:
                             filtered_data="file is empty"
                             return
