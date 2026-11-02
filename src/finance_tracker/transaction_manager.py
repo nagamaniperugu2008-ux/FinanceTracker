@@ -165,7 +165,8 @@ class TransactionManager:
         
         """
         csv_file_path=get_csv_file_path()
-        with open(csv_file_path,mode="r",newline='') as file:
+        try:
+            with open(csv_file_path,mode="r",newline='') as file:
                     #checking file is empty or not
                     if csv_file_path.stat().st_size==0:
                         filtered_data="file is empty"
@@ -178,23 +179,26 @@ class TransactionManager:
                         for row in reader:
                             data.append(to_transaction_dic(row))
                         if not data:
-                            filtered_data="file is empty"
-                            return
-        filtered_data=data
+                            filtered_data="No transactions available to display."
+                        else:
+                            filtered_data=data
+        except FileNotFoundError:
+            filtered_data="No transaction records found. Add a transaction first"
+      
         if fromdate:
             if not is_valid_date(fromdate):
-                raise InvalidInputError("Invalid date format fromdate!")
+                raise InvalidInputError("Invalid date format [from date]!")
             fromdate=formatteddate(fromdate)
 
         if todate:
             if not is_valid_date(todate):
-                raise InvalidInputError("Invalid date format todate!")
+                raise InvalidInputError("Invalid date format [to date]!")
             todate=formatteddate(todate)
         if min_amount:
-            min_amount=formattedmoney("min_money")
+            min_amount=formattedmoney(min_amount)
 
         if max_amount:
-            max_amount=formattedmoney("max_money")
+            max_amount=formattedmoney(max_amount)
 
         if attributes:
             if "amount" in attributes:
@@ -238,6 +242,8 @@ class TransactionManager:
                     mod_data.append(i)
             filtered_data=mod_data
 
+        if not filtered_data:
+            filtered_data="No transactions found matching the given filters"
         
         return filtered_data
 
