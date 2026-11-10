@@ -49,4 +49,6 @@ big_dick = {
 #    print(i)
 
 
-print("test delete:",tm.delete(8))
+#print("test delete:",tm.delete(8))
+print("test edit:",tm.edit(transaction_id=1,attributes={"date":"2026-12-09"}))
+

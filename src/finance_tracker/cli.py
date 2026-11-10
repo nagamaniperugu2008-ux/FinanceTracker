@@ -22,6 +22,13 @@ filter_parser.add_argument("--todate",type=validate_date)
 filter_parser.add_argument("--date",type=validate_date)
 filter_parser.add_argument("--type",type=str,choices=['income','expense'])
 filter_parser.add_argument('--category',type=str)
+edit_parser=subparsers.add_parser("edit",help="for edit edit transaction")
+edit_parser.add_argument("--id",type=validate_id,required=True)
+edit_parser.add_argument("--amount",type=validate_amount)
+edit_parser.add_argument("--type",type=str,choices=['income','expense'])
+edit_parser.add_argument("--category",type=str)
+edit_parser.add_argument("--date",type=validate_date)
+edit_parser.add_argument("--note",type=str)
 args=parser.parse_args()
 if (args.command=="list"):
     data=tm.view()
@@ -53,4 +60,20 @@ if (args.command=="filter"):
 
     ts=tm.filter(attributes=attributes,fromdate=args.fromdate,todate=args.todate,min_amount=args.min,max_amount=args.max)
     print(ts) 
-    
+
+if (args.command=="edit"):
+    attributes={}
+    if(args.amount is not None ):
+        attributes["amount"]=args.amount
+    if(args.type is not None):
+        attributes["type"]=args.type
+    if(args.date is not None):
+        attributes["date"]=args.date
+    if(args.category is not None):
+        attributes["category"]=args.category
+    if(args.note is not None):
+        attributes["note"]=args.note
+
+    if not attributes:
+        parser.error("At least one attribute must be specified to update.")
+    print("message:",tm.edit(transaction_id=args.id,attributes=attributes))

@@ -13,6 +13,7 @@ def formattedmoney(money):
     """ takes a string and returns as float amount value """
     try: 
         if float(money):
+           
            return float(money)
     except ValueError:
         raise InvalidInputError("invalid amount value!")
@@ -33,10 +34,19 @@ def get_csv_file_path():
     return current_file_parent/"data/data.csv"
 
 
+def is_valid_amount(amount):
+    if amount>0:
+        return True
+    else:
+        return False
+
 def validate_amount(value):
-    amount=float(value)
-    if amount <= 0:
-        raise argparse.ArgumentTypeError("Amount must be greater than zero")
+    try:
+        amount=float(value)
+        if not is_valid_amount(amount):
+            raise argparse.ArgumentTypeError("Amount must be greater than zero")
+    except ValueError:
+        raise argparse.ArgumentTypeError("Invalid amount value! amount must be a positive number")
     return amount
 
 def validate_date(value):
@@ -72,7 +82,7 @@ def id_generate():
                                 raise ValueError(f"invalid transaction negative ID found in csv file")   
                             avail_ids.append(int(row['id']))
                         if avail_ids:
-                            next_id=max(avail_ids)+1
+                            next_id=max(avail_ids)+1  #raises value error when id is not a integer
                 except ValueError as e:
                     raise ValueError(f"invalid transaction ID found in CSV file:{e}")
     return next_id
@@ -88,12 +98,53 @@ def to_transaction_dic(dic):
             "note":dic["note"]            
         }
 
+
+def is_valid_id(transaction_id):
+    if isinstance(transaction_id,int) and transaction_id>0 :
+        return True
+    return False
+
+def id_exists(transaction_id):
+    """
+    Checks is exists or not if id exists return True
+    If file doesn't exist return false
+    """
+    path=get_csv_file_path()
+    avail_ids=[]
+    if not path.is_file():
+        return False
+    with open(path,mode='r',newline='') as file:
+        if path.stat().st_size==0:
+            return False
+        else :
+            reader=csv.DictReader(file)
+            first_row=next(reader,None)
+            if first_row is None:
+                return False
+            else:
+                avail_ids.append(int(first_row['id']))
+                for row in reader: 
+                    if int(row['id'])>=0:   
+                        avail_ids.append(int(row['id']))
+                if avail_ids:
+                    if transaction_id in avail_ids:
+                        return True
+                    else:
+                        return False
+
 def validate_id(transaction_id):
     try:
-        transaction_id=int(transaction_id)
-        if not isinstance(transaction_id,int) or not transaction_id>0 :
-            raise argparse.ArgumentTypeError("Invalid ID! ID must be a Positive Number")
-    except ValueError:
-        raise argparse.ArgumentError("Invalid ID! ID must be a Positive Number")
-    return transaction_id
-    
+        if is_valid_id(int(transaction_id)):
+            return int(transaction_id)
+    except ValueError :
+        raise argparse.ArgumentTypeError("Invalid ID! ID must be a Positive Number")
+    raise argparse.ArgumentTypeError("Invalid ID! ID must be a Positive Number")
+
+def validate_attributes(test_attr):
+    source={"amount","type","category","note","date"}
+    if not test_attr:
+        raise InvalidInputError("Invalid test_attr input")
+    if test_attr.keys()<=source:
+       return True
+    else:
+        return False

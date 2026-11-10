@@ -3,7 +3,7 @@ from .models import Transaction
 import csv
 import dataclasses
 from pathlib import Path
-from .utilities import formatteddate,formattedmoney,is_valid_date,get_csv_file_path,id_generate,to_transaction_dic
+from .utilities import *
 
 
 class TransactionManager:
@@ -101,7 +101,7 @@ class TransactionManager:
 
 
         
-    def delete(self,id):
+    def delete(self,transaction_id:int):
         """
           Deletes the given transaction from the csv data file.
           Returns result of the process(deleted or not).
@@ -110,7 +110,7 @@ class TransactionManager:
                InvalidInputError: if the dict is Invalid.
         
         """
-        if not id or not isinstance(id,int) or id<0:
+        if not transaction_id or validate_id(transaction_id):
             raise InvalidInputError("invalid ID  to delete the transaction") 
         # extracting csv file data
         csv_file_path=get_csv_file_path()
@@ -132,7 +132,7 @@ class TransactionManager:
         #checking given transaction with the data and delete
         if msg!="No transactions Found!":
             for i in data:
-                if (id==i['id']):
+                if (transaction_id==i['id']):
                     confirm=input("confirm to delete the transaction y/n:")
                     if confirm=='y':
                         data.remove(i)
@@ -146,8 +146,7 @@ class TransactionManager:
                         fields.append(key)
                     with open(csv_file_path,mode="w",newline="") as file:
                         writer=csv.DictWriter(file,fieldnames=fields)
-                        if csv_file_path.stat().st_size == 0 :
-                            writer.writeheader()
+                        writer.writeheader()
                         writer.writerows(data)
                 else:
                     msg="Transaction is not Found!"
@@ -248,5 +247,69 @@ class TransactionManager:
         return filtered_data
 
     
+    def edit(self,transaction_id,attributes):
+        """
+           Edit the existed transaction.
+           takes input id and attribute and date to change(type="expense").
+           Returns message updated or not. 
+
+        """
+        if not validate_id(transaction_id):
+            raise InvalidInputError("Invalid Transaction_id to edit! Transaction_id must be a Positive number")
+        if not isinstance(attributes,dict):
+            raise InvalidInputError("Invalid attribute type! it takes dictionary value")
+        if  not validate_attributes(attributes) :
+            raise InvalidInputError("Invalid attribute! Allowed attributes: amount,type,category,date,note")
+        csvfile_path=get_csv_file_path()
+        if csvfile_path.is_file():
+            if id_exists(transaction_id):
+                msg=""
+                data=[]
+                flag=0
+                if "amount" in attributes:
+                    if is_valid_amount(attributes["amount"]):
+                        attributes["amount"]=formattedmoney(attributes["amount"])
+                    else:
+                        raise InvalidInputError("Invalid amount! amount must be positive number")
+                if "date" in attributes:
+                    if is_valid_date(attributes["date"]):
+                        attributes["date"]=formatteddate(attributes['date'])
+                    else:
+                        raise InvalidInputError("Invalid date! date must be in the form %y%m%d")
+                if "type" in attributes:
+                    if not attributes["type"] in ["income","expense"]:
+                        raise InvalidInputError("Invalid Type! takes only income or expense ")
+                with open(csvfile_path,mode='r',newline="") as file:
+                        reader=csv.DictReader(file)
+                        #formatting the dictionaries
+                        for row in reader:
+                            data.append(to_transaction_dic(row))
+                for i,row in enumerate(data):
+                        if row['id']==transaction_id:
+                            for key,value in attributes.items():
+                                data[i][key]=value
+                            flag=1
+                if flag==1:
+                        fields=[]
+                        for key in data[0].keys():
+                            fields.append(key)
+                        with open(csvfile_path,mode="w",newline='') as file:
+                            writer=csv.DictWriter(file,fieldnames=fields)
+                            writer.writeheader()
+                            writer.writerows(data)
+                        msg="Transaction Updated..."
+                else:
+                    msg="Transaction Not Found!"
+                return msg
+            else:
+                 return "Transaction Not Fount!" 
+        else:
+            return "No transactions Found!" 
+                
+                
 
 
+                                    
+
+                                
+                                        
